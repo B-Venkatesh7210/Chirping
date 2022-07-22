@@ -1,0 +1,443 @@
+[
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "creator",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "chirpingId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
+			}
+		],
+		"name": "AddChirping",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "chirpingId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "creator",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "wingsGiver",
+				"type": "address"
+			}
+		],
+		"name": "CagesGiven",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "currLevel",
+				"type": "uint256"
+			}
+		],
+		"name": "LevelPromoted",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "chirpingId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "creator",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "wingsGiver",
+				"type": "address"
+			}
+		],
+		"name": "WingsGiven",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_numOfCharacters",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_chirpingText",
+				"type": "string"
+			}
+		],
+		"name": "addChirping",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			}
+		],
+		"name": "addUser",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			}
+		],
+		"name": "checkUser",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "chirpingId",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "chirpingMap",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "chirpingId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "creator",
+				"type": "address"
+			},
+			{
+				"internalType": "string",
+				"name": "chirpingText",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "wings",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "cages",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "hide",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_chirpingId",
+				"type": "uint256"
+			}
+		],
+		"name": "givingCage",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_chirpingId",
+				"type": "uint256"
+			}
+		],
+		"name": "givingWings",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "promoteLevel",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			}
+		],
+		"name": "showCurrUser",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "uId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "username",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "totalChirpings",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "totalWings",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "totalChirpTokens",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "level",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "totalCages",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "prevTimestamp",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct ChirpingContract.User",
+				"name": "",
+				"type": "tuple"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "showUsers",
+		"outputs": [
+			{
+				"components": [
+					{
+						"internalType": "uint256",
+						"name": "uId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "username",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "totalChirpings",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "totalWings",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "totalChirpTokens",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "level",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "totalCages",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "prevTimestamp",
+						"type": "uint256"
+					}
+				],
+				"internalType": "struct ChirpingContract.User[]",
+				"name": "",
+				"type": "tuple[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "userId",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "userIdToUsername",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "usernameToUser",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "uId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "username",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "totalChirpings",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "totalWings",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "totalChirpTokens",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "level",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "totalCages",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "prevTimestamp",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	}
+]
