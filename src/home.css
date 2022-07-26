@@ -13,7 +13,7 @@ body {
   color: white;
 }
 
-.connectWallet{
+.connectWallet {
   position: absolute;
   width: 15rem;
   height: 4rem;
@@ -33,7 +33,7 @@ body {
   outline: white 2px solid;
 }
 
-.textfield{
+.textfield {
   border: none;
   outline: none;
   background: #010a06;
@@ -48,8 +48,33 @@ body {
 }
 
 .mainBg {
-  background: #1F2231;
+  background: linear-gradient(
+    116.72deg,
+    #b6e679 -19.59%,
+    rgba(157, 229, 245, 0.496034) 54.5%,
+    rgba(181, 70, 220, 0.5) 120.19%
+  );
   height: 100%;
   min-height: 100vh;
   width: 100%;
+}
+
+.middleBar {
+  height: 100%;
+  width: 49%;
+  background: green;
+  overflow: scroll;
+}
+
+.middleBar::-webkit-scrollbar {
+  display: none;
+}
+
+.leftSideBar {
+  height: 100%;
+  width: 24%;
+  background: none;
+  /* border-right: black 5px solid;
+  border-top: black 5px solid;
+  border-radius: 20px; */
 }
