@@ -9,14 +9,24 @@ import AllChirpings from "./AllChirpings";
 import config from "../config/config";
 import ChirpingText from "../assets/images/ChirpingText.png";
 import ChirpingLogo from "../assets/logos/ChirpingLogo.png";
+import Close from "../assets/images/Close.png";
+import ReactModal from "react-modal";
+import MyProfile from "./MyProfile";
+import Sample from "../assets/images/Sample.png";
 
 const Homepage = () => {
   Moralis.initialize("DhIkCD6RgzXux1tHt61zUUfy05Qw6YDg7P4F77TI");
   Moralis.serverURL = "https://odzn6qu9o4zo.usemoralis.com:2053/server";
 
   const { authenticate, isAuthenticated, user, logout } = useMoralis();
+  const displayPicture =
+    "https://ipfs.moralis.io:2053/ipfs/QmeRcZfbJJD4To5hxsTiDyuUDYVTppg4RYnnMozSaJDMR3";
   const [formData, setFormData] = useState({
     desp: "",
+    imageFile: undefined,
+  });
+  const [addPictureData, setAddPictureData] = useState({
+    imageFile: undefined,
   });
   const [navStatus, setNavStatus] = useState({
     home: true,
@@ -26,14 +36,16 @@ const Homepage = () => {
   });
 
   const [random, setRandom] = useState(false);
+  const [imageURL, setImageURL] = useState();
   const [promoteLevelModal, setPromoteLevelModal] = useState(false);
   const [promoteLevelStatus, setPromoteLevelStatus] = useState();
   const [chirpingModal, setChirpingModal] = useState(false);
+  const [addNameData, setAddNameData] = useState({
+    name: ""
+  })
   const [allChirpings, setAllChirpings] = useState([]);
   const [myChirpings, setMyChirpings] = useState([]);
   const [myCagedChirpings, setMyCagedChirpings] = useState([]);
-  const [dataHash, setDataHash] = useState();
-  const [dataUrl, setDataUrl] = useState();
   const [currUser, setCurrUser] = useState();
   const [userData, setUserData] = useState({
     username: "",
@@ -115,17 +127,33 @@ const Homepage = () => {
     }
   }, [user, isAuthenticated, random]);
 
-  const givingWings = async (uId) => {
+  const givingWings = async (chirpingId) => {
     const options = {
       contractAddress: config.contractAddress,
       abi: contractABI,
       functionName: "givingWings",
       params: {
-        _chirpingId: uId,
+        _chirpingId: chirpingId,
       },
     };
 
-    await Moralis.executeFunction(options);
+    const x = await Moralis.executeFunction(options);
+    await x.wait();
+  };
+
+  const wingsGiven = async (chirpingId) => {
+    const readOptions = {
+      contractAddress: config.contractAddress,
+      functionName: "wingsGivenCheck",
+      abi: contractABI,
+      params: {
+        _chirpingId: chirpingId,
+        _user: currUser.username,
+      },
+    };
+
+    const result = await Moralis.executeFunction(readOptions);
+    return result;
   };
 
   const givingCage = async (uId) => {
@@ -157,6 +185,22 @@ const Homepage = () => {
     console.log("Level status has been updated");
   };
 
+  const addingName = async(e) => {
+    e.preventDefault();
+
+    const options = {
+      contractAddress: config.contractAddress,
+      abi: contractABI,
+      functionName: "addName",
+      params: {
+        _name: addNameData.name,
+      },
+    }
+    
+    await Moralis.executeFunction(options);
+
+  }
+
   const addUser = async (username) => {
     const options = {
       contractAddress: config.contractAddress,
@@ -164,6 +208,7 @@ const Homepage = () => {
       functionName: "addUser",
       params: {
         user: username,
+        displayPicture: displayPicture,
       },
     };
 
@@ -192,13 +237,52 @@ const Homepage = () => {
     console.log("logged out");
   };
 
+  const uploadImage = async () => {
+    const data = formData.imageFile[0];
+    const file = new Moralis.File(data.name, data);
+    await file.saveIPFS();
+    return file.ipfs();
+  };
+
+  const uploadDisplayPicture = async () => {
+    const data = addPictureData.imageFile[0];
+    const file = new Moralis.File(data.name, data);
+    await file.saveIPFS();
+    return file.ipfs();
+  };
+
+  const settingImageURL = async () => {
+    let imageUrl = "none";
+    if (currUser.level >= 0) {
+      if (formData.imageFile === undefined) {
+        return imageURL;
+      } else {
+        const imageURL = await uploadImage();
+        return imageURL;
+      }
+    } else {
+      return imageUrl;
+    }
+  };
+
+  const settingDisplayPictureURL = async () => {
+    if (currUser.level >= 0) {
+      const imageURL = await uploadDisplayPicture();
+      return imageURL;
+    }
+  };
+
   const addChirping = async (e) => {
     e.preventDefault();
+
+    const imageUrl = await settingImageURL();
+    console.log(imageURL);
 
     const strLen = formData.desp.length;
 
     const metadata = {
       chirpingText: formData.desp,
+      imageURL: imageUrl,
     };
     const file = new Moralis.File("file.json", {
       base64: btoa(JSON.stringify(metadata)),
@@ -215,215 +299,129 @@ const Homepage = () => {
       params: {
         _numOfCharacters: strLen,
         _chirpingText: dataUrl,
+        _chirpingImage: dataUrl,
       },
     };
 
     await Moralis.executeFunction(options);
+    setTimeout(function () {
+      console.log("Chirping has been added");
+      window.location.reload();
+    }, 10000);
 
     console.log("executed");
   };
 
-  return (
-    // <div
-    //   style={{
-    //     height: "100%",
-    //     width: "100%",
-    //     display: "flex",
-    //     flexDirection: "column",
-    //     justifyContent: "start",
-    //     alignItems: "center",
-    //   }}
-    // >
-    //   <span style={{ fontSize: "100px" }}>CHIRPING</span>
-    // {!user ? (
-    //   <button className="connectWallet" onClick={login}>
-    //     <span className="title" style={{ fontSize: "15px" }}>
-    //       Connect Wallet
-    //     </span>
-    //   </button>
-    // ) : (
-    //   <button className="connectWallet" onClick={logOut}>
-    //     <span className="title" style={{ fontSize: "15px" }}>
-    //       {getEllipsisTxt(user.get("ethAddress"), 6)}
-    //     </span>
-    //   </button>
-    // )}
-    //   <div
-    //     style={{
-    //       display: "flex",
-    //       flexDirection: "row",
-    //       justifyContent: "space-evenly",
-    //       alignItems: "center",
-    //       width: "100%",
-    //       height: "40vh",
-    //       background: "red",
-    //     }}
-    //   >
-    //     {user ? (
-    //       <div
-    //         style={{
-    //           display: "flex",
-    //           flexDirection: "column",
-    //           justifyContent: "space-evenly",
-    //           alignItems: "center",
-    //           width: "30%",
-    //           height: "40vh",
-    //           background: "blue",
-    //         }}
-    //       >
-    //         <div
-    //           className="textfield"
-    //           style={{ height: "2rem", width: "15rem" }}
-    //         >
-    //           {getEllipsisTxt(userData.userName, 6)}
-    //         </div>
-    //         <div
-    //           className="textfield"
-    //           style={{ height: "2rem", width: "15rem" }}
-    //         >
-    //           Total Chirpings : {userData.totalChirpings}
-    //         </div>
-    //         <div
-    //           className="textfield"
-    //           style={{ height: "2rem", width: "15rem" }}
-    //         >
-    //           Total Wings : {userData.totalWings}
-    //         </div>
-    //         <div
-    //           className="textfield"
-    //           style={{ height: "2rem", width: "15rem" }}
-    //         >
-    //           Level : {userData.level}
-    //         </div>
-    //         <button
-    //           className="textfield"
-    //           style={{ height: "2rem", width: "15rem" }}
-    //           onClick={() => {}}
-    //         >
-    //           Click here
-    //         </button>
-    //       </div>
-    //     ) : (
-    //       <span>Connect your wallet</span>
-    //     )}
+  const addPicture = async (e) => {
+    e.preventDefault();
+    const imageURL = await settingDisplayPictureURL();
 
-    //     <form
-    //       style={{
-    //         display: "flex",
-    //         flexDirection: "column",
-    //         justifyContent: "center",
-    //         alignItems: "center",
-    //       }}
-    //       onSubmit={addChirping}
-    //     >
-    //       <textarea
-    //         className="textfield"
-    //         style={{ width: "25rem", height: "10rem", marginTop: "2rem" }}
-    //         type="text"
-    //         value={formData.desp}
-    //         placeholder="Type about your favourite rapper"
-    //         onChange={(e) => {
-    //           setFormData({ ...formData, desp: e.target.value });
-    //         }}
-    //       ></textarea>
-    //       <input
-    //         className="textfield"
-    //         type="submit"
-    //         style={{
-    //           width: "10rem",
-    //           height: "3rem",
-    //           fontSize: "20px",
-    //           marginTop: "2rem",
-    //         }}
-    //       ></input>
-    //     </form>
-    //   </div>
-    //   {/* <div
-    //     style={{
-    //       flexDirection: "column",
-    //       justifyContent: "end",
-    //       alignItems: "center",
-    //       height: "40vh",
-    //       width: "50%",
-    //       background: "black",
-    //       overflow: "scroll",
-    //     }}
-    //   >
-    //   {allChirpings.map((chirping) => (
-    //     <div
-    //       key={chirping.uId}
-    //       style={{
-    //         display: "flex",
-    //         flexDirection: "row",
-    //         justifyContent: "space-between",
-    //         alignItems: "center",
-    //         width: "90%",
-    //         height: "5rem",
-    //         background: "green",
-    //         margin: "1rem 0rem",
-    //       }}
-    //     >
-    //       <span>Creator: {getEllipsisTxt(chirping.creator, 6)}</span>
-    //       {showChirpingText(chirping.chirpingText)}
-    //       <span>{chirping.wings.toNumber()}</span>
-    //       <button onClick={() => givingWings(chirping.chirpingId)}>
-    //         Give Wing
-    //       </button>
-    //     </div>
-    //   ))}
-    // </div> */}
-    // </div>
+    const options = {
+      contractAddress: config.contractAddress,
+      abi: contractABI,
+      functionName: "changeDisplayPicture",
+      params: {
+        _imageURL: imageURL,
+      },
+    };
+
+    await Moralis.executeFunction(options);
+  };
+
+  return (
     <div className="mainBg">
-      {promoteLevelModal ? (
-        <div
-          style={{
-            height: "50vh",
-            width: "50%",
-            position: "absolute",
-            top: "25%",
-            right: "25%",
-            background: "yellow",
-          }}
-        >
-          {promoteLevelStatus ? (
-            <span>You've been promoted</span>
-          ) : (
-            <span>You're not promoted</span>
-          )}
-          <button
-            onClick={() => {
-              setPromoteLevelModal(false);
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          padding: "2rem 2rem 0rem 2rem",
+        }}
+      >
+        {promoteLevelModal ? (
+          <div
+            style={{
+              height: "50vh",
+              width: "50%",
+              position: "absolute",
+              top: "25%",
+              right: "25%",
+              background: "yellow",
             }}
           >
-            Close
+            {promoteLevelStatus ? (
+              <span>You've been promoted</span>
+            ) : (
+              <span>You're not promoted</span>
+            )}
+            <button
+              onClick={() => {
+                setPromoteLevelModal(false);
+              }}
+            >
+              Close
+            </button>
+          </div>
+        ) : (
+          <div></div>
+        )}
+        {!user ? (
+          <button className="connectWallet" onClick={login}>
+            <span style={{ fontSize: "26px" }}>Connect Wallet</span>
           </button>
-        </div>
-      ) : (
-        <div></div>
-      )}
-      {chirpingModal ? (
-        <div
+        ) : (
+          <div>
+            <button className="connectWallet2" onClick={logOut}>
+              <span style={{ fontSize: "30px" }}>
+                {/* {getEllipsisTxt(user.get("ethAddress"), 6)} */}
+                Logout
+              </span>
+            </button>
+            <div
+              className="displayPicture"
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                overflow: "hidden",
+              }}
+            >
+              <img
+                alt="Profile"
+                src={currUser ? currUser.displayPicture : displayPicture}
+                style={{
+                  width: "8rem",
+                  height: "8rem",
+                }}
+              ></img>
+            </div>
+          </div>
+        )}
+        <ReactModal
+          className="chirpingModal"
           style={{
-            height: "60vh",
-            width: "50%",
-            position: "absolute",
-            top: "25%",
-            right: "25%",
-            background: "yellow",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-evenly",
-            alignItems: "center",
+            overlay: {
+              backgroundColor: "rgb(228, 179, 229, 0.45)",
+            },
+          }}
+          isOpen={chirpingModal}
+          onRequestClose={() => {
+            setChirpingModal(false);
           }}
         >
-          <button
+          <div
             style={{ position: "absolute", right: "1rem", top: "1rem" }}
             onClick={() => {
               setChirpingModal(false);
             }}
           >
-            Close
-          </button>
+            <img
+              alt="Close"
+              src={Close}
+              style={{ width: "2rem", marginRight: "1rem" }}
+            ></img>
+          </div>
           <form
             style={{
               display: "flex",
@@ -443,6 +441,34 @@ const Homepage = () => {
                 setFormData({ ...formData, desp: e.target.value });
               }}
             ></textarea>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "start",
+                alignItems: "start",
+                width: "35rem",
+              }}
+            >
+              {currUser ? (
+                currUser.level >= 0 ? (
+                  <input
+                    className="textField"
+                    type="file"
+                    style={{ marginTop: "2rem", marginLeft: "4rem" }}
+                    onChange={(e) => {
+                      e.preventDefault();
+                      setFormData({ ...formData, imageFile: e.target.files });
+                    }}
+                  ></input>
+                ) : (
+                  <div></div>
+                )
+              ) : (
+                <div></div>
+              )}
+            </div>
+
             <input
               className="textfield"
               type="submit"
@@ -450,35 +476,11 @@ const Homepage = () => {
                 width: "10rem",
                 height: "3rem",
                 fontSize: "20px",
-                marginTop: "1rem",
+                marginTop: "2rem",
               }}
             ></input>
           </form>
-        </div>
-      ) : (
-        <div></div>
-      )}
-      {!user ? (
-        <button className="connectWallet" onClick={login}>
-          <span className="title" style={{ fontSize: "15px" }}>
-            Connect Wallet
-          </span>
-        </button>
-      ) : (
-        <button className="connectWallet" onClick={logOut}>
-          <span className="title" style={{ fontSize: "15px" }}>
-            {getEllipsisTxt(user.get("ethAddress"), 6)}
-          </span>
-        </button>
-      )}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          padding: "2rem 2rem 0rem 2rem",
-        }}
-      >
+        </ReactModal>
         <div
           style={{
             height: "15vh",
@@ -514,11 +516,12 @@ const Homepage = () => {
           <div className="leftSideBar">
             <button
               onClick={() => {
-                console.log(userData);
-                console.log(allChirpings);
-                console.log(myChirpings);
-                console.log(myCagedChirpings);
-                console.log(promoteLevelStatus);
+                // console.log(userData);
+                // console.log(allChirpings);
+                // console.log(myChirpings);
+                // console.log(myCagedChirpings);
+                // console.log(promoteLevelStatus);
+                console.log(currUser.name);
               }}
             >
               CLick here
@@ -539,18 +542,24 @@ const Homepage = () => {
                   alignItems: "center",
                 }}
               >
-                HOME
-                {allChirpings.map((chirping) => (
-                  <AllChirpings
-                    chirping={chirping}
-                    givingCage={() => {
-                      givingCage(chirping.chirpingId);
-                    }}
-                    givingWings={() => {
-                      givingWings(chirping.chirpingId);
-                    }}
-                  />
-                ))}
+                {allChirpings
+                  .map((chirping) => (
+                    <AllChirpings
+                      key={chirping.chirpingId}
+                      chirping={chirping}
+                      givingCage={() => {
+                        givingCage(chirping.chirpingId);
+                      }}
+                      givingWings={async () => {
+                        await givingWings(chirping.chirpingId);
+                      }}
+                      wingsGivenCheck={async () => {
+                        const x = await wingsGiven(chirping.chirpingId);
+                        return x;
+                      }}
+                    />
+                  ))
+                  .reverse()}
               </div>
             ) : navStatus.myChirpings ? (
               <div
@@ -560,17 +569,20 @@ const Homepage = () => {
                   alignItems: "center",
                 }}
               >
-                {myChirpings.map((chirping) => (
-                  <AllChirpings
-                    chirping={chirping}
-                    givingCage={() => {
-                      givingCage(chirping.chirpingId);
-                    }}
-                    givingWings={() => {
-                      givingWings(chirping.chirpingId);
-                    }}
-                  />
-                ))}
+                {myChirpings
+                  .map((chirping) => (
+                    <AllChirpings
+                      key={chirping.chirpingId}
+                      chirping={chirping}
+                      givingCage={() => {
+                        givingCage(chirping.chirpingId);
+                      }}
+                      givingWings={() => {
+                        givingWings(chirping.chirpingId);
+                      }}
+                    />
+                  ))
+                  .reverse()}
               </div>
             ) : navStatus.myCagedChirpings ? (
               <div
@@ -580,27 +592,38 @@ const Homepage = () => {
                   alignItems: "center",
                 }}
               >
-                {myCagedChirpings.map((chirping) => (
-                  <AllChirpings
-                    chirping={chirping}
-                    givingCage={() => {
-                      givingCage(chirping.chirpingId);
-                    }}
-                    givingWings={() => {
-                      givingWings(chirping.chirpingId);
-                    }}
-                  />
-                ))}
+                {myCagedChirpings
+                  .map((chirping) => (
+                    <AllChirpings
+                      key={chirping.chirpingId}
+                      chirping={chirping}
+                      givingCage={() => {
+                        givingCage(chirping.chirpingId);
+                      }}
+                      givingWings={() => {
+                        givingWings(chirping.chirpingId);
+                      }}
+                    />
+                  ))
+                  .reverse()}
               </div>
             ) : navStatus.myProfile ? (
-              <div>My Profile</div>
+              <MyProfile
+                currUser={currUser}
+                addPicture={addPicture}
+                setAddPictureData={setAddPictureData}
+                addPictureData={addPictureData}
+                addNameData={addNameData}
+                setAddNameData={setAddNameData}
+                addingName={addingName}
+              />
             ) : (
               <div>Something Else</div>
             )}
           </div>
-          <div style={{ height: "100%", width: "25%", background: "green" }}>
+          <div style={{ height: "100%", width: "25%" }}>
             <RightSideBar
-              currUser={userData}
+              currUser={currUser}
               setPromoteLevelModal={setPromoteLevelModal}
               promoteLevel={promoteLevel}
             />
