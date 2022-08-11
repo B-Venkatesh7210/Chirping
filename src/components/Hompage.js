@@ -12,7 +12,10 @@ import ChirpingLogo from "../assets/logos/ChirpingLogo.png";
 import Close from "../assets/images/Close.png";
 import ReactModal from "react-modal";
 import MyProfile from "./MyProfile";
-import Sample from "../assets/images/Sample.png";
+import { Link } from "react-router-dom";
+import LogoAnimation from "../assets/images/LogoAnimation.gif";
+import Spinner from "../assets/images/Spinner.gif";
+import CreatorProfile from "./CreatorProfile";
 
 const Homepage = () => {
   Moralis.initialize("DhIkCD6RgzXux1tHt61zUUfy05Qw6YDg7P4F77TI");
@@ -33,19 +36,21 @@ const Homepage = () => {
     myChirpings: false,
     myCagedChirpings: false,
     myProfile: false,
+    creatorProfile: false,
   });
 
   const [random, setRandom] = useState(false);
-  const [imageURL, setImageURL] = useState();
   const [promoteLevelModal, setPromoteLevelModal] = useState(false);
-  const [promoteLevelStatus, setPromoteLevelStatus] = useState();
   const [chirpingModal, setChirpingModal] = useState(false);
   const [addNameData, setAddNameData] = useState({
-    name: ""
-  })
+    name: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [promoteLevelStatus, setpromoteLevelStatus] = useState(false);
   const [allChirpings, setAllChirpings] = useState([]);
   const [myChirpings, setMyChirpings] = useState([]);
   const [myCagedChirpings, setMyCagedChirpings] = useState([]);
+  const [instructionModal, setInstructionModal] = useState(false);
   const [currUser, setCurrUser] = useState();
   const [userData, setUserData] = useState({
     username: "",
@@ -54,6 +59,7 @@ const Homepage = () => {
     totalCages: 0,
     level: 0,
   });
+  const [currCreator, setCurrCreator] = useState();
 
   useEffect(() => {
     const enableWeb3 = async () => {
@@ -127,18 +133,39 @@ const Homepage = () => {
     }
   }, [user, isAuthenticated, random]);
 
-  const givingWings = async (chirpingId) => {
+  const getCreatorData = async (_creator) => {
     const options = {
       contractAddress: config.contractAddress,
       abi: contractABI,
-      functionName: "givingWings",
+      functionName: "showCurrUser",
       params: {
-        _chirpingId: chirpingId,
+        user: _creator,
       },
     };
 
     const x = await Moralis.executeFunction(options);
-    await x.wait();
+    return x;
+  };
+
+  const givingWings = async (chirpingId) => {
+    try {
+      const options = {
+        contractAddress: config.contractAddress,
+        abi: contractABI,
+        functionName: "givingWings",
+        params: {
+          _chirpingId: chirpingId,
+        },
+      };
+
+      const transaction = await Moralis.executeFunction(options);
+      setLoading(true);
+      await transaction.wait();
+      setLoading(false);
+      window.location.reload();
+    } catch (err) {
+      alert(err.data.message);
+    }
   };
 
   const wingsGiven = async (chirpingId) => {
@@ -157,6 +184,7 @@ const Homepage = () => {
   };
 
   const givingCage = async (uId) => {
+    setLoading(true);
     const options = {
       contractAddress: config.contractAddress,
       abi: contractABI,
@@ -166,10 +194,29 @@ const Homepage = () => {
       },
     };
 
-    await Moralis.executeFunction(options);
+    const transaction = await Moralis.executeFunction(options);
+    await transaction.wait();
+    setLoading(false);
+    window.location.reload();
+  };
+
+  const cagesGiven = async (chirpingId) => {
+    const readOptions = {
+      contractAddress: config.contractAddress,
+      functionName: "cagesGivenCheck",
+      abi: contractABI,
+      params: {
+        _chirpingId: chirpingId,
+        _user: currUser.username,
+      },
+    };
+
+    const result = await Moralis.executeFunction(readOptions);
+    return result;
   };
 
   const promoteLevel = async (username) => {
+    setLoading(true);
     const options = {
       contractAddress: config.contractAddress,
       abi: contractABI,
@@ -179,15 +226,35 @@ const Homepage = () => {
       },
     };
 
-    const promoteLevelStatus = await Moralis.executeFunction(options);
-    console.log(promoteLevelStatus);
-    setPromoteLevelStatus(promoteLevelStatus);
+    const transaction = await Moralis.executeFunction(options);
+    await transaction.wait();
+    setpromoteLevelStatus(true);
+    setLoading(false);
     console.log("Level status has been updated");
   };
 
-  const addingName = async(e) => {
-    e.preventDefault();
+  const promoteLevelCheck = () => {
+    if (
+      currUser.totalChirpings >= 2 &&
+      currUser.totalChirpings < 4 &&
+      currUser.totalWings >= 2 &&
+      currUser.totalWings < 4 &&
+      currUser.level === 0
+    ) {
+      return true;
+    } else if (
+      currUser.totalChirpings >= 4 &&
+      currUser.totalWings >= 4 &&
+      currUser.level < 2
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
+  const addingName = async () => {
+    setLoading(true);
     const options = {
       contractAddress: config.contractAddress,
       abi: contractABI,
@@ -195,33 +262,45 @@ const Homepage = () => {
       params: {
         _name: addNameData.name,
       },
-    }
-    
-    await Moralis.executeFunction(options);
-
-  }
-
-  const addUser = async (username) => {
-    const options = {
-      contractAddress: config.contractAddress,
-      abi: contractABI,
-      functionName: "addUser",
-      params: {
-        user: username,
-        displayPicture: displayPicture,
-      },
     };
 
-    await Moralis.executeFunction(options);
-    console.log("User has been added");
+    const transaction = await Moralis.executeFunction(options);
+    await transaction.wait();
+    setLoading(false);
+    window.location.reload();
+  };
+
+  const addUser = async (username) => {
+    try {
+      const options = {
+        contractAddress: config.contractAddress,
+        abi: contractABI,
+        functionName: "addUser",
+        params: {
+          user: username,
+          displayPicture: displayPicture,
+        },
+      };
+      const transaction = await Moralis.executeFunction(options);
+      setLoading(true);
+      await transaction.wait();
+      setLoading(false);
+      window.location.reload();
+      console.log("User has been added");
+      setInstructionModal(true);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const login = async () => {
     if (!isAuthenticated) {
+      setLoading(true);
       await authenticate({ signingMessage: "Log in using Moralis" })
         .then(async function (user) {
           console.log(user.get("ethAddress"));
           const username = user.get("ethAddress");
+          setLoading(true);
           addUser(username);
         })
         .catch(function (error) {
@@ -230,10 +309,12 @@ const Homepage = () => {
     } else {
       console.log("Already logged In");
     }
+    setLoading(false);
   };
 
   const logOut = async () => {
     await logout();
+    window.location.reload();
     console.log("logged out");
   };
 
@@ -252,10 +333,10 @@ const Homepage = () => {
   };
 
   const settingImageURL = async () => {
-    let imageUrl = "none";
+    let imageUrl = "";
     if (currUser.level >= 0) {
       if (formData.imageFile === undefined) {
-        return imageURL;
+        return imageUrl;
       } else {
         const imageURL = await uploadImage();
         return imageURL;
@@ -272,11 +353,10 @@ const Homepage = () => {
     }
   };
 
-  const addChirping = async (e) => {
-    e.preventDefault();
+  const addChirping = async () => {
+    setLoading(true);
 
     const imageUrl = await settingImageURL();
-    console.log(imageURL);
 
     const strLen = formData.desp.length;
 
@@ -303,17 +383,17 @@ const Homepage = () => {
       },
     };
 
-    await Moralis.executeFunction(options);
-    setTimeout(function () {
-      console.log("Chirping has been added");
-      window.location.reload();
-    }, 10000);
+    const transaction = await Moralis.executeFunction(options);
+
+    await transaction.wait();
+    setLoading(false);
+    window.location.reload();
 
     console.log("executed");
   };
 
-  const addPicture = async (e) => {
-    e.preventDefault();
+  const addPicture = async () => {
+    setLoading(true);
     const imageURL = await settingDisplayPictureURL();
 
     const options = {
@@ -325,7 +405,10 @@ const Homepage = () => {
       },
     };
 
-    await Moralis.executeFunction(options);
+    const transaction = await Moralis.executeFunction(options);
+    await transaction.wait();
+    setLoading(false);
+    window.location.reload();
   };
 
   return (
@@ -338,66 +421,73 @@ const Homepage = () => {
           padding: "2rem 2rem 0rem 2rem",
         }}
       >
-        {promoteLevelModal ? (
+        <ReactModal
+          className="loading"
+          style={{
+            overlay: {
+              backgroundColor: "rgb(228, 179, 229, 0.45)",
+              backdropFilter: "blur(5px)",
+            },
+          }}
+          isOpen={loading}
+        >
+          <img
+            alt="Logo Animation"
+            src={ChirpingLogo}
+            style={{
+              width: "12rem",
+              position: "absolute",
+              top: "35%",
+              right: "45%",
+            }}
+          ></img>
+        </ReactModal>
+        <ReactModal
+          className="addPictureModal"
+          style={{
+            width: "20rem",
+            height: "15rem",
+            overlay: {
+              backgroundColor: "rgb(228, 179, 229, 0.45)",
+            },
+          }}
+          isOpen={promoteLevelModal}
+          onRequestClose={() => {
+            setPromoteLevelModal(false);
+          }}
+        >
+          <div
+            style={{ position: "absolute", right: "1rem", top: "1rem" }}
+            onClick={() => {
+              setPromoteLevelModal(false);
+            }}
+          >
+            <img
+              alt="Close"
+              src={Close}
+              style={{ width: "1.5rem", marginRight: "1rem" }}
+            ></img>
+          </div>
           <div
             style={{
-              height: "50vh",
-              width: "50%",
-              position: "absolute",
-              top: "25%",
-              right: "25%",
-              background: "yellow",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "100%",
             }}
           >
             {promoteLevelStatus ? (
-              <span>You've been promoted</span>
-            ) : (
-              <span>You're not promoted</span>
-            )}
-            <button
-              onClick={() => {
-                setPromoteLevelModal(false);
-              }}
-            >
-              Close
-            </button>
-          </div>
-        ) : (
-          <div></div>
-        )}
-        {!user ? (
-          <button className="connectWallet" onClick={login}>
-            <span style={{ fontSize: "26px" }}>Connect Wallet</span>
-          </button>
-        ) : (
-          <div>
-            <button className="connectWallet2" onClick={logOut}>
-              <span style={{ fontSize: "30px" }}>
-                {/* {getEllipsisTxt(user.get("ethAddress"), 6)} */}
-                Logout
+              <span className="text" style={{ fontSize: "32px" }}>
+                You've Been Promoted
               </span>
-            </button>
-            <div
-              className="displayPicture"
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-                overflow: "hidden",
-              }}
-            >
-              <img
-                alt="Profile"
-                src={currUser ? currUser.displayPicture : displayPicture}
-                style={{
-                  width: "8rem",
-                  height: "8rem",
-                }}
-              ></img>
-            </div>
+            ) : (
+              <span className="text" style={{ fontSize: "32px" }}>
+                Processing, please wait!
+              </span>
+            )}
           </div>
-        )}
+        </ReactModal>
         <ReactModal
           className="chirpingModal"
           style={{
@@ -429,7 +519,10 @@ const Homepage = () => {
               justifyContent: "center",
               alignItems: "center",
             }}
-            onSubmit={addChirping}
+            onSubmit={() => {
+              setChirpingModal(false);
+              addChirping();
+            }}
           >
             <textarea
               className="textfield"
@@ -481,25 +574,92 @@ const Homepage = () => {
             ></input>
           </form>
         </ReactModal>
+        <ReactModal
+          className="chirpingModal"
+          style={{
+            overlay: {
+              backgroundColor: "rgb(228, 179, 229, 0.45)",
+            },
+          }}
+          isOpen={instructionModal}
+          onRequestClose={() => {
+            setInstructionModal(false);
+          }}
+        >
+          <div
+            style={{ position: "absolute", right: "1rem", top: "1rem" }}
+            onClick={() => {
+              setInstructionModal(false);
+            }}
+          >
+            <img
+              alt="Close"
+              src={Close}
+              style={{ width: "2rem", marginRight: "1rem" }}
+            ></img>
+          </div>
+          <div className="text" style={{ fontSize: "30px" }}>
+            Instructions
+          </div>
+        </ReactModal>
+        {!user ? (
+          <button className="connectWallet" onClick={login}>
+            <span style={{ fontSize: "22px" }}>Connect Wallet</span>
+          </button>
+        ) : (
+          <div>
+            <button className="connectWallet2" onClick={logOut}>
+              <span style={{ fontSize: "14px" }}>Logout</span>
+            </button>
+            <div
+              className="displayPicture"
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                overflow: "hidden",
+              }}
+            >
+              <img
+                alt="Profile"
+                src={currUser ? currUser.displayPicture : displayPicture}
+                style={{
+                  width: "8rem",
+                  height: "8rem",
+                }}
+              ></img>
+            </div>
+          </div>
+        )}
         <div
           style={{
             height: "15vh",
-            width: "42%",
+            width: "60%",
             display: "flex",
             flexDirection: "row",
-            justifyContent: "space-around",
+            justifyContent: "start",
             alignItems: "center",
           }}
         >
-          <img
-            alt="Chirping logo"
-            src={ChirpingLogo}
-            style={{ width: "5rem", marginBottom: "0.5rem" }}
-          ></img>
+          <Link to="/">
+            <img
+              alt="Chirping logo"
+              src={ChirpingLogo}
+              className="chirpingLogo"
+            ></img>
+          </Link>
+
           <img
             alt="Chirping text"
             src={ChirpingText}
-            style={{ width: "35rem", margin: "1rem" }}
+            style={{
+              width: "35rem",
+              position: "absolute",
+              top: "-3%",
+              left: "30%",
+              right: "25%",
+            }}
           ></img>
         </div>
         <div
@@ -514,18 +674,18 @@ const Homepage = () => {
           }}
         >
           <div className="leftSideBar">
-            <button
+            {/* <button
               onClick={() => {
                 // console.log(userData);
                 // console.log(allChirpings);
                 // console.log(myChirpings);
                 // console.log(myCagedChirpings);
                 // console.log(promoteLevelStatus);
-                console.log(currUser.name);
+                console.log(currUser);
               }}
             >
               CLick here
-            </button>
+            </button> */}
             <LeftSideBar
               currUser={currUser}
               setChirpingModal={setChirpingModal}
@@ -534,91 +694,153 @@ const Homepage = () => {
             />
           </div>
           <div className="middleBar">
-            {navStatus.home ? (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                {allChirpings
-                  .map((chirping) => (
-                    <AllChirpings
-                      key={chirping.chirpingId}
-                      chirping={chirping}
-                      givingCage={() => {
-                        givingCage(chirping.chirpingId);
-                      }}
-                      givingWings={async () => {
-                        await givingWings(chirping.chirpingId);
-                      }}
-                      wingsGivenCheck={async () => {
-                        const x = await wingsGiven(chirping.chirpingId);
-                        return x;
-                      }}
-                    />
-                  ))
-                  .reverse()}
+            {user ? (
+              <div>
+                {navStatus.home ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                    }}
+                  >
+                    {allChirpings
+                      .map((chirping) => (
+                        <AllChirpings
+                          key={chirping.chirpingId}
+                          chirping={chirping}
+                          givingCage={() => {
+                            givingCage(chirping.chirpingId);
+                          }}
+                          givingWings={async () => {
+                            await givingWings(chirping.chirpingId);
+                          }}
+                          wingsGivenCheck={async () => {
+                            const x = await wingsGiven(chirping.chirpingId);
+                            return x;
+                          }}
+                          cagesGivenCheck={async () => {
+                            const x = await cagesGiven(chirping.chirpingId);
+                            return x;
+                          }}
+                          getCreatorData={async () => {
+                            const x = await getCreatorData(chirping.creator);
+                            return x;
+                          }}
+                          setNavStatus={setNavStatus}
+                          setCurrCreator={setCurrCreator}
+                        />
+                      ))
+                      .reverse()}
+                  </div>
+                ) : navStatus.myChirpings ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                    }}
+                  >
+                    {myChirpings
+                      .map((chirping) => (
+                        <AllChirpings
+                          key={chirping.chirpingId}
+                          chirping={chirping}
+                          givingCage={() => {
+                            givingCage(chirping.chirpingId);
+                          }}
+                          givingWings={() => {
+                            givingWings(chirping.chirpingId);
+                          }}
+                          wingsGivenCheck={async () => {
+                            const x = await wingsGiven(chirping.chirpingId);
+                            return x;
+                          }}
+                          cagesGivenCheck={async () => {
+                            const x = await cagesGiven(chirping.chirpingId);
+                            return x;
+                          }}
+                          getCreatorData={async () => {
+                            const x = await getCreatorData(chirping.creator);
+                            return x;
+                          }}
+                          setNavStatus={setNavStatus}
+                          setCurrCreator={setCurrCreator}
+                        />
+                      ))
+                      .reverse()}
+                  </div>
+                ) : navStatus.myCagedChirpings ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                    }}
+                  >
+                    {myCagedChirpings
+                      .map((chirping) => (
+                        <AllChirpings
+                          key={chirping.chirpingId}
+                          chirping={chirping}
+                          givingCage={() => {
+                            givingCage(chirping.chirpingId);
+                          }}
+                          givingWings={() => {
+                            givingWings(chirping.chirpingId);
+                          }}
+                          wingsGivenCheck={async () => {
+                            const x = await wingsGiven(chirping.chirpingId);
+                            return x;
+                          }}
+                          cagesGivenCheck={async () => {
+                            const x = await cagesGiven(chirping.chirpingId);
+                            return x;
+                          }}
+                          getCreatorData={async () => {
+                            const x = await getCreatorData(chirping.creator);
+                            return x;
+                          }}
+                          setCurrCreator={setCurrCreator}
+                        />
+                      ))
+                      .reverse()}
+                  </div>
+                ) : navStatus.myProfile ? (
+                  <MyProfile
+                    currUser={currUser}
+                    addPicture={addPicture}
+                    setAddPictureData={setAddPictureData}
+                    addPictureData={addPictureData}
+                    addNameData={addNameData}
+                    setAddNameData={setAddNameData}
+                    addingName={addingName}
+                  />
+                ) : navStatus.creatorProfile ? (
+                  <CreatorProfile
+                    currCreator={async () => {
+                      const x = await getCreatorData(currCreator);
+                      return x;
+                    }}
+                  />
+                ) : (
+                  <div>Something Else</div>
+                )}
               </div>
-            ) : navStatus.myChirpings ? (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                {myChirpings
-                  .map((chirping) => (
-                    <AllChirpings
-                      key={chirping.chirpingId}
-                      chirping={chirping}
-                      givingCage={() => {
-                        givingCage(chirping.chirpingId);
-                      }}
-                      givingWings={() => {
-                        givingWings(chirping.chirpingId);
-                      }}
-                    />
-                  ))
-                  .reverse()}
-              </div>
-            ) : navStatus.myCagedChirpings ? (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                {myCagedChirpings
-                  .map((chirping) => (
-                    <AllChirpings
-                      key={chirping.chirpingId}
-                      chirping={chirping}
-                      givingCage={() => {
-                        givingCage(chirping.chirpingId);
-                      }}
-                      givingWings={() => {
-                        givingWings(chirping.chirpingId);
-                      }}
-                    />
-                  ))
-                  .reverse()}
-              </div>
-            ) : navStatus.myProfile ? (
-              <MyProfile
-                currUser={currUser}
-                addPicture={addPicture}
-                setAddPictureData={setAddPictureData}
-                addPictureData={addPictureData}
-                addNameData={addNameData}
-                setAddNameData={setAddNameData}
-                addingName={addingName}
-              />
             ) : (
-              <div>Something Else</div>
+              <div
+                className="text"
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "40vh",
+                  fontSize: "50px",
+                }}
+              >
+                Please Connect Your Wallet
+              </div>
             )}
           </div>
           <div style={{ height: "100%", width: "25%" }}>
@@ -626,6 +848,10 @@ const Homepage = () => {
               currUser={currUser}
               setPromoteLevelModal={setPromoteLevelModal}
               promoteLevel={promoteLevel}
+              promoteLevelCheck={() => {
+                const x = promoteLevelCheck();
+                return x;
+              }}
             />
           </div>
         </div>

@@ -5,7 +5,7 @@ import Wings from "../assets/logos/WingsYellow.png";
 import Cages from "../assets/logos/CageYellow.png";
 import Level from "../assets/logos/Level.png";
 
-const RightSideBar = ({ currUser, setPromoteLevelModal, promoteLevel }) => {
+const RightSideBar = ({ currUser, setPromoteLevelModal, promoteLevel, promoteLevelCheck }) => {
   function togglePromoteLevel() {
     setPromoteLevelModal(true);
   }
@@ -66,7 +66,7 @@ const RightSideBar = ({ currUser, setPromoteLevelModal, promoteLevel }) => {
               alt="Level"
               src={Level}
               style={{ width: "3rem", marginRight: "2rem" }}
-              // onClick={() => {console.log(toString(currUser.name))}}
+              onClick={() => {console.log(promoteLevelCheck())}}
             ></img>
             <img
               alt="Chirpings"
@@ -113,7 +113,8 @@ const RightSideBar = ({ currUser, setPromoteLevelModal, promoteLevel }) => {
           )}
         </div>
       </div>
-      <div
+      {
+        currUser ? promoteLevelCheck() ? <button
         className="normalButton"
         style={{ height: "2.5rem", width: "50%", marginTop: "1rem" }}
         onClick={() => {
@@ -124,7 +125,21 @@ const RightSideBar = ({ currUser, setPromoteLevelModal, promoteLevel }) => {
         <span className="buttonText" style={{ fontSize: "24px" }}>
           Level Up
         </span>
-      </div>
+      </button> : <button
+        className="normalButtonNoHover"
+        disabled={true}
+        style={{ height: "2.5rem", width: "50%", marginTop: "1rem" }}
+        onClick={() => {
+          togglePromoteLevel();
+          promoteLevel(currUser.username);
+        }}
+      >
+        <span className="buttonText" style={{ fontSize: "24px" }}>
+          Level Up
+        </span>
+      </button> : <div></div>
+      }
+      
     </div>
   );
 };

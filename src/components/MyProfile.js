@@ -13,7 +13,7 @@ const MyProfile = ({
   addPictureData,
   addNameData,
   setAddNameData,
-  addingName
+  addingName,
 }) => {
   const [addPictureModal, setAddPictureModal] = useState(false);
   const [addNameModal, setAddNameModal] = useState(false);
@@ -62,7 +62,10 @@ const MyProfile = ({
             alignItems: "center",
             margin: "2rem",
           }}
-          onSubmit={addPicture}
+          onSubmit={() => {
+            setAddPictureModal(false);
+            addPicture();
+          }}
         >
           <input
             className="textField"
@@ -121,8 +124,11 @@ const MyProfile = ({
             justifyContent: "center",
             alignItems: "center",
             margin: "2rem",
+          }}  
+          onSubmit={() => {
+            setAddNameModal(false);
+            addingName();
           }}
-          onSubmit={addingName}
         >
           <input
             className="textfield"
@@ -205,7 +211,7 @@ const MyProfile = ({
           <img
             alt="Total Wings"
             src={Wings}
-            style={{ width: "4rem", marginRight: "1rem" }}
+            style={{ width: "7rem", marginRight: "1rem" }}
           ></img>
           <span className="rightSideBarText" style={{ fontSize: "4rem" }}>
             {currUser.totalWings.toNumber()}

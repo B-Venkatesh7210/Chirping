@@ -15,8 +15,8 @@ body {
 
 .connectWallet {
   position: absolute;
-  width: 15rem;
-  height: 4rem;
+  width: 13rem;
+  height: 3.5rem;
   right: 6rem;
   top: 4rem;
   background: #f4ed38;
@@ -33,12 +33,21 @@ body {
   font-family: Hand Drawn Shapes;
 }
 
+.connectWallet2:hover {
+  transform: scale(1.1);
+}
+
+.connectWallet:hover {
+  transform: scale(1.1);
+  outline: 4px solid black;
+}
+
 .connectWallet2 {
   position: absolute;
-  width: 15rem;
-  height: 4rem;
-  left: 4rem;
-  top: 3rem;
+  width: 5rem;
+  height: 1.5rem;
+  right: 4rem;
+  top: 8rem;
   background: #f4ed38;
   box-shadow: 0px 15px 10px rgba(0, 0, 0, 0.25);
   border-radius: 25px;
@@ -193,6 +202,7 @@ input::file-selector-button {
 }
 
 .chirpingPost {
+  position: relative;
   min-height: 10rem;
   width: 90%;
   background: rgb(241, 235, 99, 50%);
@@ -209,6 +219,16 @@ input::file-selector-button {
 
 .text {
   font-family: Hand Drawn Shapes;
+}
+
+.textOnHover {
+  font-family: Hand Drawn Shapes;
+  transition: all 0.25s ease-in-out;
+  cursor: pointer;
+}
+
+.textOnHover:hover {
+  transform: scale(1.1);
 }
 
 .rightSideBarText {
@@ -254,7 +274,7 @@ input::file-selector-button {
   z-index: 199;
 }
 
-.addPictureModal{
+.addPictureModal {
   height: 30vh;
   width: 30%;
   position: absolute;
@@ -267,8 +287,239 @@ input::file-selector-button {
   outline: 3px solid black;
 }
 
-.chirpingImage{
+.chirpingImage {
   width: 12rem;
   border-radius: 10px;
-  
+  box-shadow: 10px 10px 20px #9fbbbe;
+}
+
+.logo {
+  width: 3rem;
+}
+
+.logoOnHover {
+  transition: all 0.25s ease-in-out;
+}
+
+.logoOnHover:hover {
+  transform: scale(1.1);
+}
+
+.loading {
+  background-color: rgb(228, 179, 229, 0.45);
+  z-index: 99;
+}
+
+.chirpingLogo {
+  width: 6rem;
+  margin-bottom: 0.5rem;
+  position: absolute;
+  top: 6%;
+  left: 8%;
+  transition: all 0.25s ease-in-out;
+  cursor: pointer;
+}
+
+.chirpingLogo:hover {
+  transform: scale(1.1);
+}
+
+.mainBg2 {
+  background: linear-gradient(
+    116.72deg,
+    #b6e679 -19.59%,
+    rgba(157, 229, 245, 0.496034) 54.5%,
+    rgba(181, 70, 220, 0.5) 120.19%
+  );
+  height: 100%;
+  width: 100%;
+}
+
+.normalText {
+  font-family: "Catamaran", sans-serif;
+}
+
+.guide {
+  height: 220vh;
+  width: 100%;
+  background: #232526;
+  background: -webkit-linear-gradient(to right, #232526, #414345);
+  border-top-right-radius: 120px;
+  border-top-left-radius: 120px;
+  padding-bottom: 5vh;
+}
+
+.attributes {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+  width: 20%;
+  background: linear-gradient(
+    116.72deg,
+    #b6e679 -19.59%,
+    rgba(157, 229, 245, 0.496034) 54.5%,
+    rgba(181, 70, 220, 0.5) 120.19%
+  );
+  border-radius: 40px;
+  padding: 2rem 0rem;
+}
+
+.attributeText {
+  font-size: 25px;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.attributeBox {
+  border: 3px solid black;
+  box-shadow: -4px -4px 30px -15px rgba(255, 227, 56, 0.75),
+    4px 4px 50px -10px rgba(255, 227, 56, 0.75);
+  border-radius: 40px;
+}
+
+.attributeBoxAnim {
+  transform: translateY(0px);
+  animation: floatGif 10s ease-in-out infinite;
+}
+
+@keyframes floatGif {
+  0%,
+  100% {
+    transform: translateY(40px);
+  }
+  50% {
+    transform: translateY(-40px);
+  }
+}
+
+.attributeBoxAnim2 {
+  transform: translateY(0px);
+  animation: floatGif2 10s ease-in-out infinite;
+}
+
+@keyframes floatGif2 {
+  0%,
+  100% {
+    transform: translateY(-40px);
+  }
+  50% {
+    transform: translateY(40px);
+  }
+}
+
+.level {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+}
+
+.levelDesp {
+  width: 14rem;
+  background: linear-gradient(
+    116.72deg,
+    #b6e679 -19.59%,
+    rgba(157, 229, 245, 0.496034) 54.5%,
+    rgba(181, 70, 220, 0.5) 120.19%
+  );
+  border: 3px solid black;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+}
+
+.levelDespAnim0 {
+  animation: colorChange0 10s ease-in-out infinite;
+}
+.levelDespAnim1 {
+  animation: colorChange1 10s ease-in-out infinite;
+}
+.levelDespAnim2 {
+  animation: colorChange2 10s ease-in-out infinite;
+}
+.levelDespAnim3 {
+  animation: colorChange3 10s ease-in-out infinite;
+}
+.levelDespAnim4 {
+  animation: colorChange4 10s ease-in-out infinite;
+}
+
+@keyframes colorChange0 {
+  0% {
+    box-shadow: none;
+    transform: scale(1);
+  }
+  10% {
+    box-shadow: -4px -4px 30px -15px rgba(255, 227, 56, 0.75),
+      4px 4px 50px -10px rgba(255, 227, 56, 0.75);
+    transform: scale(1.05);
+  }
+  20% {
+    box-shadow: none;
+    transform: scale(1);
+  }
+}
+@keyframes colorChange1 {
+  20% {
+    box-shadow: none;
+    transform: scale(1);
+  }
+  30% {
+    box-shadow: -4px -4px 30px -15px rgba(255, 227, 56, 0.75),
+      4px 4px 50px -10px rgba(255, 227, 56, 0.75);
+    transform: scale(1.05);
+  }
+  40% {
+    box-shadow: none;
+    transform: scale(1);
+  }
+}
+@keyframes colorChange2 {
+  40% {
+    box-shadow: none;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: -4px -4px 30px -15px rgba(255, 227, 56, 0.75),
+      4px 4px 50px -10px rgba(255, 227, 56, 0.75);
+    transform: scale(1.05);
+  }
+  60% {
+    box-shadow: none;
+    transform: scale(1);
+  }
+}
+@keyframes colorChange3 {
+  60% {
+    box-shadow: none;
+    transform: scale(1);
+  }
+  70% {
+    box-shadow: -4px -4px 30px -15px rgba(255, 227, 56, 0.75),
+      4px 4px 50px -10px rgba(255, 227, 56, 0.75);
+    transform: scale(1.05);
+  }
+  80% {
+    box-shadow: none;
+    transform: scale(1);
+  }
+}
+@keyframes colorChange4 {
+  80% {
+    box-shadow: none;
+    transform: scale(1);
+  }
+  90% {
+    box-shadow: -4px -4px 30px -15px rgba(255, 227, 56, 0.75),
+      4px 4px 50px -10px rgba(255, 227, 56, 0.75);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: none;
+    transform: scale(1);
+  }
 }

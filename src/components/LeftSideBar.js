@@ -40,7 +40,7 @@ const LeftSideBar = ({
         }}
       >
         <NavLink
-          to="/"
+          to="/home"
           className={navStatus.home ? "activeTab" : "nonActiveTab"}
           onClick={() => {
             setNavStatus({
@@ -48,6 +48,7 @@ const LeftSideBar = ({
               myChirpings: false,
               myCagedChirpings: false,
               myProfile: false,
+              creatorProfile: false
             });
           }}
         >
@@ -81,7 +82,7 @@ const LeftSideBar = ({
         </NavLink>
 
         <NavLink
-          to="/"
+          to="/myChirpings"
           className={navStatus.myChirpings ? "activeTab" : "nonActiveTab"}
           onClick={() => {
             setNavStatus({
@@ -89,6 +90,7 @@ const LeftSideBar = ({
               myChirpings: true,
               myCagedChirpings: false,
               myProfile: false,
+              creatorProfile: false
             });
           }}
         >
@@ -129,7 +131,7 @@ const LeftSideBar = ({
           )}
         </NavLink>
         <NavLink
-          to="/"
+          to="/caged"
           className={navStatus.myCagedChirpings ? "activeTab" : "nonActiveTab"}
           onClick={() => {
             setNavStatus({
@@ -137,6 +139,7 @@ const LeftSideBar = ({
               myChirpings: false,
               myCagedChirpings: true,
               myProfile: false,
+              creatorProfile: false
             });
           }}
         >
@@ -169,7 +172,7 @@ const LeftSideBar = ({
           )}
         </NavLink>
         <NavLink
-          to="/"
+          to="/myAccount"
           className={navStatus.myProfile ? "activeTab" : "nonActiveTab"}
           onClick={() => {
             setNavStatus({
@@ -177,6 +180,7 @@ const LeftSideBar = ({
               myChirpings: false,
               myCagedChirpings: false,
               myProfile: true,
+              creatorProfile: false
             });
           }}
         >
