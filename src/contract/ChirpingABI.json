@@ -1,5 +1,28 @@
 [
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_numOfCharacters",
+				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "_chirpingText",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_chirpingImage",
+				"type": "string"
+			}
+		],
+		"name": "addChirping",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -29,98 +52,6 @@
 		],
 		"name": "AddChirping",
 		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "chirpingId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "creator",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "wingsGiver",
-				"type": "address"
-			}
-		],
-		"name": "CagesGiven",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "user",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "currLevel",
-				"type": "uint256"
-			}
-		],
-		"name": "LevelPromoted",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "chirpingId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "creator",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "wingsGiver",
-				"type": "address"
-			}
-		],
-		"name": "WingsGiven",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_numOfCharacters",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "_chirpingText",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_chirpingImage",
-				"type": "string"
-			}
-		],
-		"name": "addChirping",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	},
 	{
 		"inputs": [
@@ -154,6 +85,140 @@
 		"type": "function"
 	},
 	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "chirpingId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "creator",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "wingsGiver",
+				"type": "address"
+			}
+		],
+		"name": "CagesGiven",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_imageURL",
+				"type": "string"
+			}
+		],
+		"name": "changeDisplayPicture",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_chirpingId",
+				"type": "uint256"
+			}
+		],
+		"name": "givingCage",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_chirpingId",
+				"type": "uint256"
+			}
+		],
+		"name": "givingWings",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "user",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "currLevel",
+				"type": "uint256"
+			}
+		],
+		"name": "LevelPromoted",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "promoteLevel",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "level",
+				"type": "uint256"
+			}
+		],
+		"name": "timestamp",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "chirpingId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "creator",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "wingsGiver",
+				"type": "address"
+			}
+		],
+		"name": "WingsGiven",
+		"type": "event"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "uint256",
@@ -175,19 +240,6 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_imageURL",
-				"type": "string"
-			}
-		],
-		"name": "changeDisplayPicture",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -476,39 +528,6 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "_chirpingId",
-				"type": "uint256"
-			}
-		],
-		"name": "givingCage",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_chirpingId",
-				"type": "uint256"
-			}
-		],
-		"name": "givingWings",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "promoteLevel",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "address",
 				"name": "user",
 				"type": "address"
@@ -640,25 +659,6 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "level",
-				"type": "uint256"
-			}
-		],
-		"name": "timestamp",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{

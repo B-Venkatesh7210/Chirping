@@ -274,7 +274,7 @@ const MyProfile = ({
               }}
             ></img>
           </div>
-          {currUser.level >= 0 ? (
+          {currUser.level >= 5 ? (
             <button
               className="normalButton"
               style={{ height: "3rem", width: "14rem", marginTop: "2rem" }}
@@ -338,7 +338,7 @@ const MyProfile = ({
               </span>
             )}
           </div>
-          {currUser.level >= 0 ? (
+          {currUser.level >= 4 ? (
             <button
               className="normalButton"
               style={{ height: "3rem", width: "14rem", marginTop: "2rem" }}

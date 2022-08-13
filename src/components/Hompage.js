@@ -235,17 +235,38 @@ const Homepage = () => {
 
   const promoteLevelCheck = () => {
     if (
-      currUser.totalChirpings >= 2 &&
-      currUser.totalChirpings < 4 &&
-      currUser.totalWings >= 2 &&
-      currUser.totalWings < 4 &&
+      currUser.totalChirpings >= 10 &&
+      currUser.totalChirpings < 20 &&
+      currUser.totalWings >= 20 &&
       currUser.level === 0
     ) {
       return true;
     } else if (
-      currUser.totalChirpings >= 4 &&
-      currUser.totalWings >= 4 &&
-      currUser.level < 2
+      currUser.totalChirpings >= 20 &&
+      currUser.totalChirpings < 30 &&
+      currUser.totalWings >= 40 &&
+      user.level < 2
+    ) {
+      return true;
+    } else if (
+      currUser.totalChirpings >= 30 &&
+      currUser.totalChirpings < 50 &&
+      currUser.totalWings >= 60 &&
+      currUser.level < 3
+    ) {
+      return true;
+    } else if (
+      currUser.totalChirpings >= 50 &&
+      currUser.totalChirpings < 70 &&
+      currUser.totalWings >= 80 &&
+      currUser.level < 4
+    ) {
+      return true;
+    } else if (
+      currUser.totalChirpings >= 70 &&
+      currUser.totalChirpings < 100 &&
+      currUser.totalWings >= 100 &&
+      currUser.level < 5
     ) {
       return true;
     } else {
@@ -334,7 +355,7 @@ const Homepage = () => {
 
   const settingImageURL = async () => {
     let imageUrl = "";
-    if (currUser.level >= 0) {
+    if (currUser.level >= 5) {
       if (formData.imageFile === undefined) {
         return imageUrl;
       } else {
@@ -347,7 +368,7 @@ const Homepage = () => {
   };
 
   const settingDisplayPictureURL = async () => {
-    if (currUser.level >= 0) {
+    if (currUser.level >= 5) {
       const imageURL = await uploadDisplayPicture();
       return imageURL;
     }
@@ -544,7 +565,7 @@ const Homepage = () => {
               }}
             >
               {currUser ? (
-                currUser.level >= 0 ? (
+                currUser.level >= 5 ? (
                   <input
                     className="textField"
                     type="file"
